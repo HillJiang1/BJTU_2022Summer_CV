@@ -20,7 +20,7 @@ import matplotlib.pyplot as plt
 
 
 # 全局变量
-dataset_path = 'images'
+dataset_path = 'images/mood'
 accuracy_plot_path = 'plots/accuracy.png'
 loss_plot_path = 'plots/loss.png'
 output_model_path = 'models/face_expression.hdf5'
