@@ -3,6 +3,7 @@
 ## OSCS
 [![OSCS Status](https://www.oscs1024.com/platform/badge/HillJiang1/BJTU_2022Summer_CV.svg?size=large)](https://www.oscs1024.com/project/HillJiang1/BJTU_2022Summer_CV?ref=badge_large)
 
+## 项目日志
 2022.7.4 11:31
 测试CV环境
 
