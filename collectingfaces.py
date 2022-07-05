@@ -119,10 +119,9 @@ for action in action_list:
                                                cv2.COLOR_BGR2RGB)) 
 
         draw = ImageDraw.Draw(img_PIL)
-
-        # draw.text((int(image.shape[1]/2), 30), action_name,
-        #          font=ImageFont.truetype('NotoSansCJK-Black.ttc', 40),
-        #           fill=(255,0,0)) # linux
+        draw.text((int(image.shape[1] / 2), 30), action_name,
+                  font=ImageFont.truetype('NotoSansCJK-Black.ttc', 40),
+                  fill=(255, 0, 0))  # linux
         
         # 转换回OpenCV格式 
         img_OpenCV = cv2.cvtColor(np.asarray(img_PIL),
