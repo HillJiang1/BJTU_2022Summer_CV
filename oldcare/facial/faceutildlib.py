@@ -11,7 +11,7 @@ import os
 class FaceUtil:
     # 超参数
     detection_method = 'hog'  # either 'hog' or 'cnn'. default is hog.
-    tolerance = 0.3
+    tolerance = 0.4
 
     def __init__(self, encoding_file_path=None):
 
