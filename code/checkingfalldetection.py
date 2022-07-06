@@ -30,8 +30,8 @@ fall_start_time = 0 # 开始时间
 fall_limit_time = 1 # if >= 1 seconds, then he/she falls.
 
 # 全局变量
-model_path = 'models/fall_detection.hdf5'
-output_fall_path = 'supervision/fall'
+model_path = '../models/fall_detection.hdf5'
+output_fall_path = '../supervision/fall'
  # your python path
 python_path = '/Users/hilljiang/opt/anaconda3/envs/CV/bin/python'
 

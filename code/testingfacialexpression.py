@@ -24,7 +24,7 @@ ap.add_argument("-f", "--filename", required=False, default='',
 args = vars(ap.parse_args())
 
 # 全局变量
-model_path = 'models/face_expression_miniVGG.hdf5'
+model_path = '../models/face_expression_miniVGG.hdf5'
 input_video = args['filename']
 
 # 全局常量

@@ -28,7 +28,7 @@ fall_start_time = 0 # 开始时间
 fall_limit_time = 1 # if >= 1 seconds, then he/she falls.
 
 # 全局变量
-model_path = 'models/fall_detection.hdf5'
+model_path = '../models/fall_detection.hdf5'
 
 # 全局常量
 TARGET_WIDTH = 64

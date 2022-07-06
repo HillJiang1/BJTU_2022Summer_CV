@@ -27,11 +27,11 @@ ap.add_argument("-f", "--filename", required=False, default = '',
 args = vars(ap.parse_args())
 
 # 全局变量
-prototxt_file_path='models/mobilenet_ssd/MobileNetSSD_deploy.prototxt'
+prototxt_file_path='../models/mobilenet_ssd/MobileNetSSD_deploy.prototxt'
 # # Contains the Caffe deep learning model files. We’ll be using a 
 #MobileNet Single Shot Detector (SSD), “Single Shot Detectors for 
 #object detection”.
-model_file_path ='models/mobilenet_ssd/MobileNetSSD_deploy.caffemodel' 
+model_file_path ='../models/mobilenet_ssd/MobileNetSSD_deploy.caffemodel'
 input_video = args['filename']
 skip_frames = 30 # of skip frames between detections
 

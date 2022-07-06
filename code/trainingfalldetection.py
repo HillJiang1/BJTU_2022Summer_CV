@@ -19,9 +19,9 @@ from keras.preprocessing.image import ImageDataGenerator
 
 
 # 全局变量
-dataset_path = 'dataset'
-output_model_path = 'models/fall_detection.hdf5'
-output_plot_path = 'plots/fall_detection.png'
+dataset_path = '../images/fall_detect'
+output_model_path = '../models/fall_detection.hdf5'
+output_plot_path = '../plots/fall_detection.png'
 
 
 # 全局常量

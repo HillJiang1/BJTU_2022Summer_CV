@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 '''
-使用CNN做表情识别
+使用ANN做表情识别
 '''
 
 # 导入包
@@ -13,25 +13,23 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
 from keras.models import Sequential
 from keras.layers.core import Dense
-#from keras.optimizers import SGD
-from keras.optimizers import *
-from keras.utils import to_categorical
+from tensorflow.keras.optimizers import Adam,Nadam, SGD
+from tensorflow.keras.utils import to_categorical
 import numpy as np
 import matplotlib.pyplot as plt
 
-from lenet import LeNet
 
 # 全局变量
-dataset_path = 'images/mood'
-accuracy_plot_path = 'plots/accuracy_cnn.png'
-loss_plot_path = 'plots/loss_cnn.png'
-output_model_path = 'models/face_expression_cnn.hdf5'
+dataset_path = '../images/mood'
+accuracy_plot_path = '../plots/accuracy.png'
+loss_plot_path = '../plots/loss.png'
+output_model_path = '../models/face_expression.hdf5'
 
 # 全局常量
 TARGET_IMAGE_WIDTH = 28
 TARGET_IMAGE_HEIGHT = 28
 LR = 0.001 # 学习率
-BATCH_SIZE = 128
+BATCH_SIZE = 64
 EPOCHS = 40
 
 ################################################
@@ -52,10 +50,6 @@ image_paths = list(paths.list_images(dataset_path)) # path included
 X = X.reshape((X.shape[0], TARGET_IMAGE_WIDTH*TARGET_IMAGE_HEIGHT)) 
 X = X.astype("float") / 255.0 # 特征缩放，是非常重要的步骤
 
-
-X = X.reshape((X.shape[0], 28, 28, 1))
-
-
 # Show some information on memory consumption of the images
 print("[INFO] features matrix: {:.1f}MB"
       .format(X.nbytes / (1024 * 1024.0)))
@@ -73,14 +67,22 @@ print(le.classes_)
 ################################################3
 # 第二部分：创建并训练模型
 
-print('[INFO] 训练模型...')
-opt = Adam(lr = LR)
-model = LeNet.build(28,28,2,'',1)
-model.compile(loss = 'categorical_crossentropy', 
-              optimizer=opt, metrics = ['accuracy'])
+# 创建模型
+model = Sequential()
+model.add(Dense(1024, 
+              input_shape=(TARGET_IMAGE_WIDTH * TARGET_IMAGE_HEIGHT,), 
+                activation="relu"))
+model.add(Dense(512, activation="relu"))
+model.add(Dense(2, activation="softmax"))
 
+# 训练模型
+print("[INFO] 训练模型...")
+sgd = SGD(LR)
+model.compile(loss="categorical_crossentropy", optimizer=sgd,
+	metrics=["accuracy"])
 H = model.fit(X_train, y_train, validation_data=(X_test, y_test),
 	epochs=EPOCHS, batch_size=BATCH_SIZE, verbose=1)
+
 
 ################################################
 # 第三部分：评估模型
@@ -88,8 +90,8 @@ H = model.fit(X_train, y_train, validation_data=(X_test, y_test),
 # 画出accuracy曲线
 plt.style.use("ggplot")
 plt.figure()
-plt.plot(np.arange(1, EPOCHS+1), H.history["acc"], label="train_acc")
-plt.plot(np.arange(1, EPOCHS+1), H.history["val_acc"],label="val_acc")
+plt.plot(np.arange(1, EPOCHS+1), H.history["accuracy"], label="train_acc")
+plt.plot(np.arange(1, EPOCHS+1), H.history["val_accuracy"],label="val_acc")
 plt.title("Training Accuracy")
 plt.xlabel("Epoch #")
 plt.ylabel("Accuracy")

@@ -18,9 +18,9 @@ from sklearn.preprocessing import LabelEncoder
 
 
 # 全局变量
-dataset_path = 'images/mood'
-output_model_path = 'models/face_expression_miniVGG.hdf5'
-output_plot_path = 'plots/face_expression_miniVGG.png'
+dataset_path = '../images/mood'
+output_model_path = '../models/face_expression_miniVGG.hdf5'
+output_plot_path = '../plots/face_expression_miniVGG.png'
 
 
 # 全局常量

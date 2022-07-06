@@ -27,8 +27,8 @@ args = vars(ap.parse_args())
 # 全局变量
 pixel_per_metric = None
 input_video = args['filename']
-model_path = 'models/face_recognition_hog.pickle'
-people_info_path = 'info/people_info.csv'
+model_path = '../models/face_recognition_hog.pickle'
+people_info_path = '../info/people_info.csv'
 
 # 全局常量
 FACE_ACTUAL_WIDTH = 20 # 单位厘米   姑且认为所有人的脸都是相同大小

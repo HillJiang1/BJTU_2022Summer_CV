@@ -34,14 +34,14 @@ args = vars(ap.parse_args())
 input_video = args['filename']
 
 # 全局变量
-facial_recognition_model_path = 'models/face_recognition_hog.pickle'
-facial_expression_model_path = 'models/face_expression_miniVGG.hdf5'
+facial_recognition_model_path = '../models/face_recognition_hog.pickle'
+facial_expression_model_path = '../models/face_expression_miniVGG.hdf5'
 
-output_stranger_path = 'supervision/strangers'
-output_smile_path = 'supervision/smile'
+output_stranger_path = '../supervision/strangers'
+output_smile_path = '../supervision/smile'
 
-people_info_path = 'info/people_info.csv'
-facial_expression_info_path = 'info/facial_expression_info.csv'
+people_info_path = '../info/people_info.csv'
+facial_expression_info_path = '../info/facial_expression_info.csv'
 # your python path
 python_path = '/Users/hilljiang/opt/anaconda3/envs/CV/bin/python'
 

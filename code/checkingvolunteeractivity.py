@@ -29,9 +29,9 @@ args = vars(ap.parse_args())
 # 全局变量
 pixel_per_metric = None
 input_video = args['filename']
-output_activity_path = 'supervision/activity'
-model_path = 'models/face_recognition_hog.pickle'
-people_info_path = 'info/people_info.csv'
+output_activity_path = '../supervision/activity'
+model_path = '../models/face_recognition_hog.pickle'
+people_info_path = '../info/people_info.csv'
 camera_turned = 0
 python_path = '/Users/hilljiang/opt/anaconda3/envs/CV/bin/python' # your python path
 

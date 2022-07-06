@@ -19,7 +19,7 @@ from sklearn.metrics import classification_report
 # 第一部分：数据预处理
 
 # 全局变量
-dataset_path = 'images/mood'
+dataset_path = '../images/mood'
 
 # 全局常量
 N_NEIGHBOURS = 5
