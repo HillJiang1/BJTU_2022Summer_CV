@@ -43,7 +43,7 @@ output_fence_path = 'supervision/fence'
 input_video = args['filename']
 skip_frames = 30 # of skip frames between detections
 # your python path
-python_path = '/home/reed/anaconda3/envs/tensorflow/bin/python' 
+python_path = '/Users/hilljiang/opt/anaconda3/envs/CV/bin/python'
 
 # 超参数
 # minimum probability to filter weak detections
