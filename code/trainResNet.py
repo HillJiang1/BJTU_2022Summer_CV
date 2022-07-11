@@ -29,8 +29,8 @@ TARGET_WIDTH = 28
 TARGET_HEIGHT = 28
 TARGET_CHANNEL = 1
 BATCH_SIZE = 64
-EPOCHS = 15
-LR_INIT = 0.01
+EPOCHS = 50
+LR_INIT = 0.005
 DECAY = LR_INIT/EPOCHS
 MOMENTUM = 0.9
 
@@ -57,7 +57,7 @@ classWeight = classTotals.max() / classTotals
 # partition the data into training and testing splits using 80% of
 # the data for training and the remaining 20% for testing
 (trainX, testX, trainY, testY) = train_test_split(data,
-	labels, test_size=0.20, stratify=labels, random_state=42)
+	labels, test_size=0.2, stratify=labels, random_state=310)
 
 # initialize the model
 print("[INFO] compiling model...")
@@ -83,5 +83,5 @@ print(classification_report(testY.argmax(axis=1),
 	predictions.argmax(axis=1), target_names=le.classes_))
 
 # save the model to disk
-print("[INFO] serializing network...")
-model.save(output_model_path)
+print("[INFO] saving network...")
+model.save_weights(output_model_path)
