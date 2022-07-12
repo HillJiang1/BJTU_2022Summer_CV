@@ -3,8 +3,12 @@ import mediapipe as mp
 import numpy as np
 import time
 import joblib
+import os
+import subprocess
 
 pose_knn = joblib.load('../models/PoseKeypoint.joblib')
+output_fall_path = '../supervision/fall'
+python_path = '/Users/hilljiang/opt/anaconda3/envs/CV/bin/python'
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
 mp_pose = mp.solutions.pose
@@ -128,7 +132,6 @@ with mp_pose.Pose(
         results = pose.process(image)
         if results.pose_landmarks:
             for index, landmarks in enumerate(results.pose_landmarks.landmark):
-                # print(index, landmarks.x, landmarks.y, landmarks.z)
                 res_point.append(landmarks.x)
                 res_point.append(landmarks.y)
                 res_point.append(landmarks.z)
@@ -136,8 +139,18 @@ with mp_pose.Pose(
             res_point = np.array(res_point).reshape(shape1, len(keyXYZ))
             pred = pose_knn.predict(res_point)
             res_point = []
-            print(pred)
             if pred == 0:
+                event_desc = '有人摔倒!!!'
+                event_location = '走廊'
+                current_time = time.strftime('%Y-%m-%d %H:%M:%S',
+                                             time.localtime(time.time()))
+                print('[EVENT] %s, 走廊, 有人摔倒!!!' % (current_time))
+                cv2.imwrite(os.path.join(output_fall_path,
+                                         'snapshot_%s.jpg' % (time.strftime('%Y%m%d_%H%M%S'))), image)  # snapshot
+                # insert into database
+                command = '%s inserting.py --event_desc %s --event_type 3 --event_location %s' % (
+                python_path, event_desc, event_location)
+                p = subprocess.Popen(command, shell=True)
                 cv2.putText(image, "Fall", (200, 320), cv2.FONT_HERSHEY_PLAIN, 5, (255, 0, 0), 2)
             else:
                 cv2.putText(image, "Normal", (200, 320), cv2.FONT_HERSHEY_PLAIN, 5, (0, 255, 0), 2)
@@ -154,7 +167,6 @@ with mp_pose.Pose(
         fps = 1 / (currTime - prevTime)
         prevTime = currTime
         cv2.putText(image, f'FPS: {int(fps)}', (20, 70), cv2.FONT_HERSHEY_PLAIN, 3, (0, 196, 255), 2)
-        # cv2.imshow('MediaPipe Pose', cv2.flip(image, 1))
         cv2.imshow('MediaPipe Pose', image)
         if cv2.waitKey(1) & 0xFF == 27:
             break

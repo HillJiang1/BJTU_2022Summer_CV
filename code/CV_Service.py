@@ -6,6 +6,8 @@ from oldcare.track import TrackableObject
 from imutils.video import FPS
 import imutils
 import shutil
+import mediapipe as mp
+import joblib
 import dlib
 from oldcare.utils import fileassistant
 import argparse
@@ -19,99 +21,171 @@ import time
 from scipy.spatial import distance as dist
 
 def fallDetection():
-    ap = argparse.ArgumentParser()
-    ap.add_argument("-f", "--filename", required=False, default='',
-                    help="")
-    args = vars(ap.parse_args())
-    input_video = args['filename']
-
-    # 控制陌生人检测
-    fall_timing = 0  # 计时开始
-    fall_start_time = 0  # 开始时间
-    fall_limit_time = 1  # if >= 1 seconds, then he/she falls.
-
-    # 全局变量
-    model_path = '../models/fall_detection.hdf5'
+    pose_knn = joblib.load('../models/PoseKeypoint.joblib')
     output_fall_path = '../supervision/fall'
-    # your python path
     python_path = '/Users/hilljiang/opt/anaconda3/envs/CV/bin/python'
-
-    # 全局常量
-    TARGET_WIDTH = 64
-    TARGET_HEIGHT = 64
-
-    # 初始化摄像头
-    if not input_video:
-        vs = cv2.VideoCapture(0)
-        time.sleep(2)
-    else:
-        vs = cv2.VideoCapture(input_video)
-
-    # 加载模型
-    model = load_model(model_path)
-
-    print('[INFO] 开始检测是否有人摔倒...')
-    # 不断循环
-    counter = 0
-    while True:
-        counter += 1
-        # grab the current frame
-        (grabbed, image) = vs.read()
-
-        # if we are viewing a video and we did not grab a frame, then we
-        # have reached the end of the video
-        if input_video and not grabbed:
-            break
-
-        if not input_video:
-            image = cv2.flip(image, 1)
-
-        roi = cv2.resize(image, (TARGET_WIDTH, TARGET_HEIGHT))
-        roi = roi.astype("float") / 255.0
-        roi = img_to_array(roi)
-        roi = np.expand_dims(roi, axis=0)
-
-        # determine facial expression
-        (fall, normal) = model.predict(roi)[0]
-        label = "Fall (%.2f)" % (fall) if fall > normal else "Normal (%.2f)" % (normal)
-
-        # display the label and bounding box rectangle on the output frame
-        cv2.putText(image, label, (image.shape[1] - 150, 30),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.45, (0, 0, 255), 2)
-
-        if fall > normal:
-            if fall_timing == 0:  # just start timing
-                fall_timing = 1
-                fall_start_time = time.time()
-            else:  # alredy started timing
-                fall_end_time = time.time()
-                difference = fall_end_time - fall_start_time
-
-                current_time = time.strftime('%Y-%m-%d %H:%M:%S',
-                                             time.localtime(time.time()))
-
-                if difference < fall_limit_time:
-                    print('[INFO] %s, 走廊, 摔倒仅出现 %.1f 秒. 忽略.' % (current_time, difference))
-                else:  # strangers appear
+    mp_drawing = mp.solutions.drawing_utils
+    mp_drawing_styles = mp.solutions.drawing_styles
+    mp_pose = mp.solutions.pose
+    prevTime = 0
+    keyXYZ = [
+        "nose_x",
+        "nose_y",
+        "nose_z",
+        "left_eye_inner_x",
+        "left_eye_inner_y",
+        "left_eye_inner_z",
+        "left_eye_x",
+        "left_eye_y",
+        "left_eye_z",
+        "left_eye_outer_x",
+        "left_eye_outer_y",
+        "left_eye_outer_z",
+        "right_eye_inner_x",
+        "right_eye_inner_y",
+        "right_eye_inner_z",
+        "right_eye_x",
+        "right_eye_y",
+        "right_eye_z",
+        "right_eye_outer_x",
+        "right_eye_outer_y",
+        "right_eye_outer_z",
+        "left_ear_x",
+        "left_ear_y",
+        "left_ear_z",
+        "right_ear_x",
+        "right_ear_y",
+        "right_ear_z",
+        "mouth_left_x",
+        "mouth_left_y",
+        "mouth_left_z",
+        "mouth_right_x",
+        "mouth_right_y",
+        "mouth_right_z",
+        "left_shoulder_x",
+        "left_shoulder_y",
+        "left_shoulder_z",
+        "right_shoulder_x",
+        "right_shoulder_y",
+        "right_shoulder_z",
+        "left_elbow_x",
+        "left_elbow_y",
+        "left_elbow_z",
+        "right_elbow_x",
+        "right_elbow_y",
+        "right_elbow_z",
+        "left_wrist_x",
+        "left_wrist_y",
+        "left_wrist_z",
+        "right_wrist_x",
+        "right_wrist_y",
+        "right_wrist_z",
+        "left_pinky_x",
+        "left_pinky_y",
+        "left_pinky_z",
+        "right_pinky_x",
+        "right_pinky_y",
+        "right_pinky_z",
+        "left_index_x",
+        "left_index_y",
+        "left_index_z",
+        "right_index_x",
+        "right_index_y",
+        "right_index_z",
+        "left_thumb_x",
+        "left_thumb_y",
+        "left_thumb_z",
+        "right_thumb_x",
+        "right_thumb_y",
+        "right_thumb_z",
+        "left_hip_x",
+        "left_hip_y",
+        "left_hip_z",
+        "right_hip_x",
+        "right_hip_y",
+        "right_hip_z",
+        "left_knee_x",
+        "left_knee_y",
+        "left_knee_z",
+        "right_knee_x",
+        "right_knee_y",
+        "right_knee_z",
+        "left_ankle_x",
+        "left_ankle_y",
+        "left_ankle_z",
+        "right_ankle_x",
+        "right_ankle_y",
+        "right_ankle_z",
+        "left_heel_x",
+        "left_heel_y",
+        "left_heel_z",
+        "right_heel_x",
+        "right_heel_y",
+        "right_heel_z",
+        "left_foot_index_x",
+        "left_foot_index_y",
+        "left_foot_index_z",
+        "right_foot_index_x",
+        "right_foot_index_y",
+        "right_foot_index_z"
+    ]
+    print(len(keyXYZ))
+    res_point = []
+    cap = cv2.VideoCapture("../images/tests/Fall_Trim.mp4")
+    # cap = cv2.VideoCapture(0)
+    with mp_pose.Pose(
+            static_image_mode=True,
+            min_detection_confidence=0.5,
+            min_tracking_confidence=0.5) as pose:
+        while cap.isOpened():
+            success, image = cap.read()
+            if not success:
+                print("Ignoring empty camera frame.")
+                continue
+            image.flags.writeable = False
+            image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+            results = pose.process(image)
+            if results.pose_landmarks:
+                for index, landmarks in enumerate(results.pose_landmarks.landmark):
+                    res_point.append(landmarks.x)
+                    res_point.append(landmarks.y)
+                    res_point.append(landmarks.z)
+                shape1 = int(len(res_point) / len(keyXYZ))
+                res_point = np.array(res_point).reshape(shape1, len(keyXYZ))
+                pred = pose_knn.predict(res_point)
+                res_point = []
+                if pred == 0:
                     event_desc = '有人摔倒!!!'
                     event_location = '走廊'
+                    current_time = time.strftime('%Y-%m-%d %H:%M:%S',
+                                                 time.localtime(time.time()))
                     print('[EVENT] %s, 走廊, 有人摔倒!!!' % (current_time))
                     cv2.imwrite(os.path.join(output_fall_path,
                                              'snapshot_%s.jpg' % (time.strftime('%Y%m%d_%H%M%S'))), image)  # snapshot
                     # insert into database
                     command = '%s inserting.py --event_desc %s --event_type 3 --event_location %s' % (
-                    python_path, event_desc, event_location)
+                        python_path, event_desc, event_location)
                     p = subprocess.Popen(command, shell=True)
-
-        cv2.imshow('Fall detection', image)
-
-        # Press 'ESC' for exiting video
-        k = cv2.waitKey(1) & 0xff
-        if k == 27:
-            break
-
-    vs.release()
-    cv2.destroyAllWindows()
+                    cv2.putText(image, "Fall", (200, 320), cv2.FONT_HERSHEY_PLAIN, 5, (255, 0, 0), 2)
+                else:
+                    cv2.putText(image, "Normal", (200, 320), cv2.FONT_HERSHEY_PLAIN, 5, (0, 255, 0), 2)
+            # Draw the pose annotation on the image.
+            image.flags.writeable = True
+            image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+            mp_drawing.draw_landmarks(
+                image,
+                results.pose_landmarks,
+                mp_pose.POSE_CONNECTIONS,
+                landmark_drawing_spec=mp_drawing_styles.get_default_pose_landmarks_style())
+            # Flip the image horizontally for a selfie-view display.
+            currTime = time.time()
+            fps = 1 / (currTime - prevTime)
+            prevTime = currTime
+            cv2.putText(image, f'FPS: {int(fps)}', (20, 70), cv2.FONT_HERSHEY_PLAIN, 3, (0, 196, 255), 2)
+            cv2.imshow('MediaPipe Pose', image)
+            if cv2.waitKey(1) & 0xFF == 27:
+                break
+    cap.release()
 
 def fenceDetection():
     # 得到当前时间

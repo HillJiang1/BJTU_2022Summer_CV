@@ -99,7 +99,7 @@ while True:
                                          'snapshot_%s.jpg' %(time.strftime('%Y%m%d_%H%M%S'))), image)# snapshot
                 # insert into database
                 command = '%s inserting.py --event_desc %s --event_type 3 --event_location %s' %(python_path, event_desc, event_location)
-                p = subprocess.Popen(command, shell=True)  
+                p = subprocess.Popen(command, shell=True)
 
     
     cv2.imshow('Fall detection', image)
