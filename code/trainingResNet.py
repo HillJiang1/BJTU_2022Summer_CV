@@ -8,7 +8,7 @@ from __future__ import absolute_import, division, print_function
 from oldcare.datasets import SimpleDatasetLoader
 from oldcare.preprocessing import AspectAwarePreprocessor
 from oldcare.preprocessing import ImageToArrayPreprocessor
-from oldcare.conv.ResNet import resnet_50,ResNet_50
+from oldcare.conv.ResNet import resnet_50,ResNet_50,resnet_18
 from oldcare.callbacks import TrainingMonitor
 from imutils import paths
 from sklearn.model_selection import train_test_split
@@ -19,7 +19,7 @@ from sklearn.preprocessing import LabelEncoder
 
 
 # 全局变量
-dataset_path = '../images/mood'
+dataset_path = '../images/FER2013'
 output_model_path = '../models/face_expression_ResNet.hdf5'
 output_plot_path = '../plots/face_expression_ResNet.png'
 
@@ -29,8 +29,8 @@ TARGET_WIDTH = 28
 TARGET_HEIGHT = 28
 TARGET_CHANNEL = 1
 BATCH_SIZE = 64
-EPOCHS = 50
-LR_INIT = 0.005
+EPOCHS = 30
+LR_INIT = 0.01
 DECAY = LR_INIT/EPOCHS
 MOMENTUM = 0.9
 
@@ -48,7 +48,7 @@ data = data.astype("float") / 255.0
 
 # convert the labels from integers to vectors
 le = LabelEncoder().fit(labels)
-labels = to_categorical(le.transform(labels), 2)
+labels = to_categorical(le.transform(labels), 7)
 
 # account for skew in the labeled data
 classTotals = labels.sum(axis=0)
@@ -57,11 +57,11 @@ classWeight = classTotals.max() / classTotals
 # partition the data into training and testing splits using 80% of
 # the data for training and the remaining 20% for testing
 (trainX, testX, trainY, testY) = train_test_split(data,
-	labels, test_size=0.2, stratify=labels, random_state=310)
+	labels, test_size=0.02, stratify=labels, random_state=310)
 
 # initialize the model
 print("[INFO] compiling model...")
-model = resnet_50()
+model = resnet_18()
 model.build(input_shape=(None, TARGET_HEIGHT, TARGET_WIDTH, TARGET_CHANNEL))
 opt = SGD(lr=LR_INIT, decay=DECAY, momentum = MOMENTUM, nesterov=True)
 model.compile(loss="binary_crossentropy", optimizer=opt,

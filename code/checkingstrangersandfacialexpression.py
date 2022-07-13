@@ -35,7 +35,7 @@ input_video = args['filename']
 
 # 全局变量
 facial_recognition_model_path = '../models/face_recognition_hog.pickle'
-facial_expression_model_path = '../models/face_expression_miniVGG.hdf5'
+facial_expression_model_path = '../models/face_expression_multiMood.hdf5'
 
 output_stranger_path = '../supervision/strangers'
 output_smile_path = '../supervision/smile'
@@ -73,7 +73,8 @@ facial_expression_limit_time = 2 # if >= 2 seconds, he/she is smiling
 
 # 初始化摄像头
 if not input_video:
-	vs = cv2.VideoCapture(0)
+	# vs = cv2.VideoCapture(0)
+	vs = cv2.VideoCapture('../images/tests/emotion.mp4')
 	time.sleep(2)
 else:
 	vs = cv2.VideoCapture(input_video)
@@ -195,10 +196,15 @@ while True:
 			roi = np.expand_dims(roi, axis=0)
             
 			# determine facial expression
-			(neural, smile) = facial_expression_model.predict(roi)[0]
-			facial_expression_label = 'Neural' if neural > smile else 'Smile'
+			labels = ['angry', 'disgust', 'fear', 'happy', 'normal', 'sad', 'surprise']
+			print(facial_expression_model.predict(roi)[0])
+			facial_expression_label = labels[facial_expression_model.predict(roi)[0].tolist().index(max(facial_expression_model.predict(roi)[0].tolist()))]
+			# (neural, smile) = facial_expression_model.predict(roi)[0]
+			# facial_expression_label = 'Neural' if neural > smile else 'Smile'
+
             
-			if facial_expression_label == 'Smile': # alert
+			# if facial_expression_label == 'Smile': # alert
+			if facial_expression_label == 'happy':  # alert
 				if facial_expression_timing == 0: # just start timing
 					facial_expression_timing = 1
 					facial_expression_start_time = time.time()

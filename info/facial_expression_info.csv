@@ -1,3 +1,8 @@
 facial_id,facial_name
-Smile,正在笑
-Neural,正常
+angry,在生气
+happy,正在笑
+sad,在难过
+fear,在害怕
+normal,正常
+disgust,在恶心
+suprised,在惊讶
