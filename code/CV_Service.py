@@ -6,6 +6,7 @@ from oldcare.track import TrackableObject
 from imutils.video import FPS
 import imutils
 import shutil
+from oldcare.conv.ResNet import resnet_18
 import mediapipe as mp
 import joblib
 import dlib
@@ -225,7 +226,8 @@ def fenceDetection():
     # if a video path was not supplied, grab a reference to the webcam
     if not input_video:
         print("[INFO] starting video stream...")
-        vs = cv2.VideoCapture(0)
+        # vs = cv2.VideoCapture(0)
+        vs = cv2.VideoCapture('../images/tests/fence.mov')
         time.sleep(2)
     else:
         print("[INFO] opening video file...")
@@ -479,7 +481,8 @@ def facialExpressionAndStrangerDetection():
 
     # 全局变量
     facial_recognition_model_path = '../models/face_recognition_hog.pickle'
-    facial_expression_model_path = '../models/face_expression_miniVGG.hdf5'
+    facial_expression_model_path = '../models/face_expression_multiMood.hdf5'
+    # facial_expression_model_path = '../models/face_expression_ResNet_weight'
 
     output_stranger_path = '../supervision/strangers'
     output_smile_path = '../supervision/smile'
@@ -517,7 +520,8 @@ def facialExpressionAndStrangerDetection():
 
     # 初始化摄像头
     if not input_video:
-        vs = cv2.VideoCapture(0)
+        # vs = cv2.VideoCapture(0)
+        vs = cv2.VideoCapture('../images/tests/emotions1.mov')
         time.sleep(2)
     else:
         vs = cv2.VideoCapture(input_video)
@@ -525,6 +529,9 @@ def facialExpressionAndStrangerDetection():
     # 初始化人脸识别模型
     faceutil = FaceUtil(facial_recognition_model_path)
     facial_expression_model = load_model(facial_expression_model_path)
+    # facial_expression_model = resnet_18()
+    # facial_expression_model.load_weights(facial_expression_model_path)
+
 
     print('[INFO] 开始检测陌生人和表情...')
     # 不断循环
@@ -641,10 +648,13 @@ def facialExpressionAndStrangerDetection():
                 roi = np.expand_dims(roi, axis=0)
 
                 # determine facial expression
-                (neural, smile) = facial_expression_model.predict(roi)[0]
-                facial_expression_label = 'Neural' if neural > smile else 'Smile'
+                # (neural, smile) = facial_expression_model.predict(roi)[0]
+                # facial_expression_label = 'Neural' if neural > smile else 'Smile'
+                labels = ['angry', 'disgust', 'fear', 'happy', 'normal', 'sad', 'surprise']
+                print(facial_expression_model.predict(roi)[0])
+                facial_expression_label = labels[facial_expression_model.predict(roi)[0].tolist().index(max(facial_expression_model.predict(roi)[0].tolist()))]
 
-                if facial_expression_label == 'Smile':  # alert
+                if facial_expression_label == 'happy':  # alert
                     if facial_expression_timing == 0:  # just start timing
                         facial_expression_timing = 1
                         facial_expression_start_time = time.time()
@@ -719,7 +729,7 @@ def faceCollect(imagedir,id):
                   'bow_head': '请低头', 'look_left': '请看左边',
                   'look_right': '请看右边'}
     # 设置摄像头
-    cam = cv2.VideoCapture(0)
+    cam = cv2.VideoCapture('../images/tests/collect.mov')
     cam.set(3, 640)  # set video widht
     cam.set(4, 480)  # set video height
 
@@ -747,7 +757,7 @@ def faceCollect(imagedir,id):
 
         cv2.imshow('Collecting Faces', image)  # show the image
         # Press 'ESC' for exiting video
-        k = cv2.waitKey(100) & 0xff
+        k = cv2.waitKey(1) & 0xff
         if k == 27:
             break
 
@@ -854,7 +864,8 @@ def volunteerActivityDetection():
 
     # 初始化摄像头
     if not input_video:
-        vs = cv2.VideoCapture(0)
+        # vs = cv2.VideoCapture(0)
+        vs = cv2.VideoCapture('../images/tests/volunteer.mov')
         time.sleep(2)
     else:
         vs = cv2.VideoCapture(input_video)

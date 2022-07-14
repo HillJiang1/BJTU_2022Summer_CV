@@ -40,7 +40,7 @@ prototxt_file_path='../models/mobilenet_ssd/MobileNetSSD_deploy.prototxt'
 #“Single Shot Detectors for object detection”.
 model_file_path='../models/mobilenet_ssd/MobileNetSSD_deploy.caffemodel'
 output_fence_path = '../supervision/fence'
-input_video = args['filename']
+input_video = '../images/tests/fence.mov'
 skip_frames = 30 # of skip frames between detections
 # your python path
 python_path = '/Users/hilljiang/opt/anaconda3/envs/CV/bin/python'
@@ -60,7 +60,7 @@ CLASSES = ["background", "aeroplane", "bicycle", "bird", "boat",
 # if a video path was not supplied, grab a reference to the webcam
 if not input_video:
 	print("[INFO] starting video stream...")
-	vs = cv2.VideoCapture(0)
+	vs = cv2.VideoCapture('../images/tests/fence.mov')
 	time.sleep(2)
 else:
 	print("[INFO] opening video file...")

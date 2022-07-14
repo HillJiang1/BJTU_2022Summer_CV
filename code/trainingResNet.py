@@ -20,7 +20,7 @@ from sklearn.preprocessing import LabelEncoder
 
 # 全局变量
 dataset_path = '../images/FER2013'
-output_model_path = '../models/face_expression_ResNet.hdf5'
+output_model_path = '../models/face_expression_ResNet_weight'
 output_plot_path = '../plots/face_expression_ResNet.png'
 
 

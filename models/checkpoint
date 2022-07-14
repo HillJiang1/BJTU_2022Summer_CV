@@ -1,0 +1,2 @@
+model_checkpoint_path: "face_expression_ResNet_weight"
+all_model_checkpoint_paths: "face_expression_ResNet_weight"
