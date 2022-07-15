@@ -14,6 +14,7 @@ from PIL import Image, ImageDraw, ImageFont
 from oldcare.utils import fileassistant
 from keras.models import load_model
 from keras.preprocessing.image import img_to_array
+
 import cv2
 import time
 import numpy as np
@@ -74,7 +75,8 @@ facial_expression_limit_time = 2 # if >= 2 seconds, he/she is smiling
 # 初始化摄像头
 if not input_video:
 	# vs = cv2.VideoCapture(0)
-	vs = cv2.VideoCapture('../images/tests/emotion.mp4')
+	# vs = cv2.VideoCapture("rtsp://admin:admin@192.168.31.199:8554/live")
+	vs = cv2.VideoCapture("../images/tests/emotions.mov")
 	time.sleep(2)
 else:
 	vs = cv2.VideoCapture(input_video)

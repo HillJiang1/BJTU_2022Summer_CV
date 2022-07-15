@@ -64,7 +64,7 @@ if not input_video:
 	time.sleep(2)
 else:
 	print("[INFO] opening video file...")
-	vs = cv2.VideoCapture(input_video)
+	vs = cv2.VideoCapture("rtsp://admin:admin@192.168.31.199:8554/live")
     
 # 加载物体识别模型
 print("[INFO] loading model...")

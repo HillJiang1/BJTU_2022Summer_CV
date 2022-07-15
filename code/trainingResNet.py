@@ -59,22 +59,24 @@ classWeight = classTotals.max() / classTotals
 (trainX, testX, trainY, testY) = train_test_split(data,
 	labels, test_size=0.02, stratify=labels, random_state=310)
 
-# initialize the model
-print("[INFO] compiling model...")
+# # initialize the model
+# print("[INFO] compiling model...")
+# model = resnet_18()
+# model.build(input_shape=(None, TARGET_HEIGHT, TARGET_WIDTH, TARGET_CHANNEL))
+# opt = SGD(lr=LR_INIT, decay=DECAY, momentum = MOMENTUM, nesterov=True)
+# model.compile(loss="binary_crossentropy", optimizer=opt,
+# 	metrics=["accuracy"])
+#
+# # construct the set of callbacks
+# callbacks = [TrainingMonitor(output_plot_path)]
+#
+# # train the network
+# print("[INFO] training network...")
+# H = model.fit(trainX, trainY, validation_data=(testX, testY),
+# 	class_weight=classWeight, batch_size=BATCH_SIZE, epochs=EPOCHS,
+#     callbacks = callbacks, verbose=1)
 model = resnet_18()
-model.build(input_shape=(None, TARGET_HEIGHT, TARGET_WIDTH, TARGET_CHANNEL))
-opt = SGD(lr=LR_INIT, decay=DECAY, momentum = MOMENTUM, nesterov=True)
-model.compile(loss="binary_crossentropy", optimizer=opt,
-	metrics=["accuracy"])
-
-# construct the set of callbacks
-callbacks = [TrainingMonitor(output_plot_path)]
-
-# train the network
-print("[INFO] training network...")
-H = model.fit(trainX, trainY, validation_data=(testX, testY),
-	class_weight=classWeight, batch_size=BATCH_SIZE, epochs=EPOCHS,
-    callbacks = callbacks, verbose=1)
+model.load_weights('../models/face_expression_ResNet_weight')
 
 # evaluate the network
 print("[INFO] evaluating network...")
@@ -82,6 +84,6 @@ predictions = model.predict(testX, batch_size=64)
 print(classification_report(testY.argmax(axis=1),
 	predictions.argmax(axis=1), target_names=le.classes_))
 
-# save the model to disk
-print("[INFO] saving network...")
-model.save_weights(output_model_path)
+# # save the model to disk
+# print("[INFO] saving network...")
+# model.save_weights(output_model_path)

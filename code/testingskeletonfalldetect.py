@@ -126,6 +126,7 @@ with mp_pose.Pose(
         success, image = cap.read()
         if not success:
             print("Ignoring empty camera frame.")
+            cap.release()
             continue
         image.flags.writeable = False
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)

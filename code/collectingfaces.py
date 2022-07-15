@@ -40,7 +40,7 @@ action_map = {'blink':'请眨眼', 'open_mouth':'请张嘴',
               'bow_head':'请低头', 'look_left':'请看左边', 
               'look_right':'请看右边'}
 # 设置摄像头
-cam = cv2.VideoCapture(0)
+cam = cv2.VideoCapture('rtmp://192.168.31.234:24567/live/home')
 cam.set(3, 640) # set video widht
 cam.set(4, 480) # set video height
 
